@@ -18,6 +18,11 @@ import javax.swing.JPanel;
 
 
 public class MovingArrowRightSideFromASpecificPoint extends JFrame implements MouseMotionListener,MouseListener{
+	static int countArrow=0;
+
+	static final float MAXARROW=1000;
+	static  float ARROWSPEED=5;
+	static  float BALOONSPEED=50;
 	public MovingArrowRightSideFromASpecificPoint() {
 		getContentPane().setLayout(null);
 		//t.start();
@@ -54,10 +59,10 @@ public class MovingArrowRightSideFromASpecificPoint extends JFrame implements Mo
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(arrows.size()<=Arrow.MAXARROW)
+		if(arrows.size()<=MAXARROW)
 		{
 		arrows.get(arrows.size()-1).setText("-:----");
-		
+		//arrows.get(arrows.size()-1).setForeground(Color.GRAY);
 		arrows.get(arrows.size()-1).T=new MoveArrow();
 		
 		arrows.get(arrows.size()-1).T.moveArrow(0, e.getY(), 500, arrows.get(arrows.size()-1));
@@ -145,10 +150,10 @@ public class MovingArrowRightSideFromASpecificPoint extends JFrame implements Mo
 	
 
 class Arrow extends JLabel{
-	static final int MAXARROW=100;
+	
 	MoveArrow T;
 	public Arrow() {
-		super("--}");
+		super("   -}----");
 		super.setFont(new Font(super.getFont().getFontName(), super.getFont().getStyle(), 50));
 	}
 	
@@ -171,23 +176,25 @@ class MoveArrow extends Thread {
 	int xs, y, xd;
 	Component cmp;
 
+
 	
 	private void moveArrow()
 	{
-
+	
 		int i=xs;
 		int width=cmp.getBounds().width;
 		int height=cmp.getBounds().height;
-		while(xs!=xd){
+		while(i<getToolkit().getScreenSize().width){
 		cmp.setBounds(i+1,y ,width, height);
 		try {
-			Thread.sleep(1);
+			Thread.sleep(5);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		i++;
 		}
+		System.out.println("Thread ended"+countArrow++);
 	}
 	public void moveArrow(int xs,int distance,int xd,Component cmp)
 	{
@@ -221,7 +228,7 @@ class MoveBaloon extends Thread {
 		int i=0;
 		int width=cmp.getBounds().width;
 		int height=cmp.getBounds().height;
-		int offset=new Random().nextInt(500);
+		int offset=new Random().nextInt(1000);
 		while(true){
 		cmp.setBounds((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()-new Random().nextInt(10)*3-offset,i+1 ,50, 50);
 		checkForBlast();
@@ -230,7 +237,10 @@ class MoveBaloon extends Thread {
 			i=1;
 		}
 		try {
-			Thread.sleep(20);
+			Thread.sleep((int)BALOONSPEED);
+			if(BALOONSPEED>1)
+			BALOONSPEED-=(int)0.10;
+			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
